@@ -3,6 +3,8 @@ module KalibroClient
     class KalibroRange < Base
       belongs_to :reading, class_name: KalibroClient::Configurations::Reading
       belongs_to :metric_configuration, class_name: KalibroClient::Configurations::MetricConfiguration
+      
+      self.prefix = "/metric_configurations/:metric_configuration_id/kalibro_ranges"
 
       def save
         default_prefix = KalibroRange.prefix
