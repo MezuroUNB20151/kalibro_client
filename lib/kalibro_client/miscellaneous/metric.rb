@@ -1,10 +1,10 @@
 module KalibroClient
   module Miscellaneous
     class Metric
-      attr_accessor :compound, :name, :code, :scope, :description
+      attr_accessor :type, :name, :code, :scope, :description
 
-      def initialize(compound, name, code, scope)
-        @compound = compound
+      def initialize(type, name, code, scope)
+        @type = type
         @name = name
         @code = code
         @scope = scope

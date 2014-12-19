@@ -3,7 +3,7 @@ module KalibroClient
     class NativeMetric < Metric
       attr_accessor :languages
       def initialize(name, code, scope, languages)
-        super(false,name,code,scope)
+        super('NativeMetricSnapshot', name, code, scope)
         @languages = languages
       end
     end
