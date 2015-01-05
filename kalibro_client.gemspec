@@ -26,4 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "factory_girl", "~> 4.5.0"
 
   spec.add_dependency 'activeresource', '~> 4.0.0'
+  spec.add_dependency 'her'
 end

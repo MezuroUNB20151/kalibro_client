@@ -1,4 +1,6 @@
 require 'active_resource'
+require 'her'
+require 'config/initializers/her'
 
 # :nocov:
 # FIXME
