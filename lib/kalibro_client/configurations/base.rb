@@ -1,7 +1,8 @@
 module KalibroClient
   module Configurations
-    class Base < ActiveResource::Base
-      self.site = "http://localhost:8083"
+    class Base
+      include Her::Model
+      use_api CONFIGURATIONS_API
     end
   end
 end
