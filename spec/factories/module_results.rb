@@ -5,7 +5,5 @@ FactoryGirl.define do
     grade 10.0
     height 0
     metric_results { [] }
-
-    initialize_with { KalibroClient::Processor::ModuleResult.new({parent: parent, kalibro_module: kalibro_module}) }
   end
 end

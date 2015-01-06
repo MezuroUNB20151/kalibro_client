@@ -7,10 +7,8 @@ describe KalibroClient::Processor::Repository, :type => :model do
     describe 'last_processing' do
       context 'with no processing at all' do
         before :each do
-          response = mock('response')
-          response.expects(:body).returns("{}")
-          subject.expects(:get).with(:has_ready_processing).returns(false)
-          subject.expects(:post).with(:last_processing).returns(response)
+          KalibroClient::Processor::Repository.expects(:get_raw).with("/repositories/#{subject.id}/has_ready_processing").returns({parsed_data: {data: {has_ready_processing: false}}})
+          KalibroClient::Processor::Repository.expects(:post_raw).with("/repositories/#{subject.id}/last_processing").returns({parsed_data: {data: nil}})
         end
 
         it 'should return nil' do
@@ -19,14 +17,14 @@ describe KalibroClient::Processor::Repository, :type => :model do
       end
 
       context 'with a ready processing' do
-        let(:processing_params) { Hash[FactoryGirl.attributes_for(:processing).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with symbols and integers
+        let(:processing_params) { Hash[FactoryGirl.attributes_for(:processing)] }
         let(:processing) { FactoryGirl.build(:processing) }
         before :each do
-          subject.expects(:get).with(:has_ready_processing).returns(true)
+          KalibroClient::Processor::Repository.expects(:get_raw).with("/repositories/#{subject.id}/has_ready_processing").returns({parsed_data: {data: {has_ready_processing: true}}})
         end
 
         it 'should return a ready processing processing' do
-          subject.expects(:get).with(:last_ready_processing).returns(processing_params)
+          KalibroClient::Processor::Repository.expects(:get_raw).with("/repositories/#{subject.id}/last_ready_processing").returns({parsed_data: {data: {last_ready_processing: processing_params}}})
 
           expect(subject.last_processing).to eq(processing)
         end
