@@ -31,17 +31,15 @@ describe KalibroClient::Processor::Repository, :type => :model do
       end
 
       context 'with no ready processing' do
-        let(:processing_params) { Hash[FactoryGirl.attributes_for(:processing, state: 'COLLECTING').map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl returns everything with symbols and integers
+        let(:processing_params) { Hash[FactoryGirl.attributes_for(:processing, state: 'COLLECTING')] }
         let(:processing) { FactoryGirl.build(:processing, state: 'COLLECTING') }
 
         before :each do
-          subject.expects(:get).with(:has_ready_processing).returns(false)
+          KalibroClient::Processor::Repository.expects(:get_raw).with("/repositories/#{subject.id}/has_ready_processing").returns({parsed_data: {data: {has_ready_processing: false}}})
         end
 
         it 'should return the latest processing' do
-          response = mock('response')
-          response.expects(:body).returns(processing_params.to_json)
-          subject.expects(:post).with(:last_processing).returns(response)
+          KalibroClient::Processor::Repository.expects(:post_raw).with("/repositories/#{subject.id}/last_processing").returns({parsed_data: {data: processing_params}})
 
           expect(subject.last_processing).to eq(processing)
         end
@@ -50,7 +48,7 @@ describe KalibroClient::Processor::Repository, :type => :model do
 
     describe 'has_processing' do
       it 'is expected to return true when there is a processing' do
-        subject.expects(:get).with(:has_processing).returns(true)
+        KalibroClient::Processor::Repository.expects(:get_raw).with("/repositories/#{subject.id}/has_processing").returns({parsed_data: {data: {has_processing: true}}})
 
         expect(subject.has_processing).to be_truthy
       end
@@ -58,11 +56,15 @@ describe KalibroClient::Processor::Repository, :type => :model do
 
     describe 'module_result_history_of' do
       let!(:module_result) {FactoryGirl.build(:module_result)}
+      # let(:module_result_params) { Hash[FactoryGirl.attributes_for(:module_result).map { |k,v| [k.to_s, v.to_s] }] } #FIXME: Mocha is creating the expectations with strings, but FactoryGirl r
       let!(:time) { Time.now }
       before :each do
-        response = mock('response')
-        response.expects(:body).returns({module_result_history_of: [[time, module_result]]}.to_json)
-        subject.expects(:post).with(:module_result_history_of, module_id: module_result.kalibro_module.id).returns(response)
+        date_module_result = mock(:date_module_result)
+        date_module_result.expects(:date).returns(time)
+        date_module_result.expects(:module_result).returns(module_result)
+
+        KalibroClient::Processor::Repository.expects(:post_raw).with("/repositories/#{subject.id}/module_result_history_of", module_id: module_result.kalibro_module.id).returns({parsed_data: {data: [[time, module_result]]}})
+        #KalibroClient::Miscellaneous::DateModuleResult.expects(:new).with(date: time, module_result: module_result).returns(date_module_result)
 
         @history = subject.module_result_history_of(module_result)
       end
